@@ -34,7 +34,7 @@ planted:
     class: injection-to-effect
     axis: delegation
     polarity: gap
-    evidence: lib/agent.mjs:37
+    evidence: lib/agent.mjs:39
     detectable_by: [eval-pass, dcr]
     note: >
       The assistant builds one prompt from untrusted note content AND private

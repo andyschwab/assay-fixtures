@@ -1,0 +1,27 @@
+name: ci
+
+# Runs each target's own checks on every push. Planted repo-hygiene note: the
+# checkout action is pinned to a mutable major tag (@v4), not a commit SHA — the
+# R-02 Pinned-Dependencies answer in /ANSWERS.yaml.
+on:
+  push:
+  pull_request:
+
+jobs:
+  clean-lib:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node targets/clean-lib/test/slugify.test.mjs
+
+  flawed-webapp-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node targets/flawed-webapp/test/smoke.mjs

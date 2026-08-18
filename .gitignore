@@ -1,0 +1,7 @@
+node_modules/
+*.log
+# assay run outputs, if a run is ever compiled inside a target
+eval/
+handoff/
+INDEX.md
+MAINTAINER-REPORT.*

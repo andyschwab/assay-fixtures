@@ -1,0 +1,47 @@
+# Repo-root known-answer sheet — the REPOSITORY as a whole.
+# Repo-scoped instruments (OpenSSF Scorecard and anything reading repository
+# hygiene: CI, branch protection, release signing, dependency pinning) see the
+# whole repository, so their known answers live here and only here. Per-target
+# sheets deliberately carry no repo-hygiene class. Matching is by check name +
+# class. Method classes: scorecard | eval-pass.
+target: __repository__
+
+planted:
+  - id: R-01
+    class: repo-hygiene
+    check: Branch-Protection
+    axis: deterministic-gates
+    polarity: gap
+    detectable_by: [scorecard]
+    note: >
+      This fixture repo runs without branch protection (no required reviews or
+      status checks before merge). Scorecard's Branch-Protection check should score
+      low and land on the deterministic-gates axis.
+
+  - id: R-02
+    class: repo-hygiene
+    check: Pinned-Dependencies
+    axis: code-security
+    polarity: gap
+    detectable_by: [scorecard]
+    note: >
+      The CI workflow pins its action by a mutable tag, not a commit SHA. Scorecard's
+      Pinned-Dependencies check should flag the unpinned action.
+
+strengths:
+  - id: R-S1
+    class: repo-hygiene
+    check: CI-Tests
+    axis: deterministic-gates
+    polarity: strength
+    detectable_by: [scorecard]
+    note: >
+      A CI workflow runs the targets' tests on every push, so Scorecard's CI-Tests
+      check should score high. A planted repo-level strength.
+
+# Scorecard needs GitHub API reach (branch settings, workflow runs) that a bare
+# local checkout does not provide, so a live Scorecard run against this repo is the
+# way to score R-01..R-02/R-S1. Until then these are asserted, not yet measured.
+notes:
+  - Most Scorecard checks read GitHub API state, not just files on disk; a local
+    ingest of a Scorecard JSON report against this repo is the intended path.

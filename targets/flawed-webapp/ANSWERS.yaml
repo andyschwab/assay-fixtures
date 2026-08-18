@@ -10,13 +10,15 @@ planted:
   - id: P-01
     class: committed-secret
     axis: code-security
+    also_axes: [delegation]
     polarity: gap
     evidence: config/settings.mjs:6
     detectable_by: [gitleaks, eval-pass]
     note: >
       A backup-service API key hardcoded in source (inert string shaped as a
-      credential). The instrument (gitleaks) and the delegation credential census
-      should both surface it.
+      credential). A shared concern across axes: a code scanner / gitleaks lands it
+      on code-security; repo-eval's delegation credential census lands the same fact
+      on delegation. Either recovers it.
 
   - id: P-02
     class: auth-fail-open
@@ -46,14 +48,18 @@ planted:
 
   - id: P-04
     class: missing-authorization
-    axis: code-security
+    axis: delegation
+    also_axes: [code-security]
     polarity: gap
-    evidence: server.mjs:49
+    evidence: lib/sync.mjs:8
     detectable_by: [eval-pass, dcr]
     note: >
       POST /sync requires no authorization and pushes every user's notes to an
       external backup service (lib/sync.mjs), authenticated by the hardcoded backup
-      key. Cross-tenant read + external egress, reachable by any caller.
+      key. An unguarded external effect with no authority check — repo-eval's
+      delegation pass lands it on delegation (authority + halt); a code scanner lands
+      the same route on code-security. Cross-tenant read + external egress, reachable
+      by any caller.
 
   - id: P-07
     class: effects-vs-reports

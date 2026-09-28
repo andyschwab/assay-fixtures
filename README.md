@@ -25,10 +25,15 @@ repository. Two rules of the monorepo:
 - **Path-scoped methods** (secrets scanners, SAST, the LLM dimension passes)
   target a single app directory and are scored against that target's
   `ANSWERS.yaml`.
-- **Repo-scoped instruments** (OpenSSF Scorecard and anything else that reads
-  repository hygiene — CI, branch protection, release signing) see the whole
-  repository, so their known answers can only live at repo level, never per-app.
-  Per-app sheets deliberately carry no `repo-hygiene` class.
+- **Path-scoped instruments** (`fresh-clone`, which installs, builds, lints,
+  typechecks and tests a package from a clean checkout and replays its README's
+  commands; `dependency-scan`, `npm audit` over its lockfiles) also run per
+  target and are scored against that target's sheet.
+- **Repo-scoped instruments** (`repo-census`, and anything else that reads
+  repository hygiene — the CI gate, the agent contract, the runbook, owner
+  evidence, branch protection, action pinning) see the whole repository, so
+  their known answers can only live at repo level (`/ANSWERS.yaml`), never
+  per-app. Per-app sheets deliberately carry no `repo-hygiene` class.
 
 ## Why a clean control
 
@@ -59,6 +64,13 @@ strengths:                     # planted STRENGTHS an evaluation should also nam
     polarity: strength
     evidence: docs/adr/0001-storage-choice.md:1
     note: ...
+instruments:                   # what each offline instrument should record here
+  - id: I-01
+    check: lint                # the instrument's own check name (its native category)
+    detectable_by: [fresh-clone]
+    axis: deterministic-gates
+    polarity: gap
+    note: No lint script is declared.
 ```
 
 Matching is by evidence path + class, never by wording: a run recovers `P-01` if
@@ -67,11 +79,30 @@ substance matches the class. A finding matching nothing planted is not
 automatically wrong — the sheets are the floor of ground truth, not the ceiling —
 but on `clean-lib` it counts against the evaluator.
 
+An **instrument answer** (`instruments:`, or any item with a `check:`) is matched
+by method + check name + polarity instead, because an absence — no runbook, no
+lint script — has no single file to cite. Instrument answers are the target's
+standing facts, not planted defects: they pin what a deterministic instrument
+reads, so a change in its reading shows as a miss, and on the control they are
+the gaps that are known rather than manufactured.
+
+**Method classes** (`detectable_by`): `eval-pass` (assay's built-in method),
+`dcr` (deep-code-review), and each instrument by its own id — `gitleaks`,
+`fresh-clone`, `dependency-scan`, `repo-census`. `scorecard` is retired in assay
+(its checks need live GitHub API access); an item only it can find reads out of
+scope, never missed. A method counts as run when the run record says it ran, so
+an instrument that ran clean and missed an item reads missed.
+
 ## Using the fixtures
 
 ```
 # a secrets instrument against one target
 gitleaks dir targets/flawed-webapp --report-format json --report-path gitleaks.json
+
+# assay's offline instruments (from an assay checkout)
+node assay.mjs fresh-clone <fixtures>/targets/flawed-webapp --no-clone --out fresh-clone.json
+node assay.mjs dependency-scan <fixtures>/targets/flawed-webapp --out dependency-scan.json
+node assay.mjs repo-census <fixtures> --out repo-census.json      # repo-scoped: the root
 
 # the flawed app actually runs (zero dependencies, Node >= 20)
 node targets/flawed-webapp/server.mjs

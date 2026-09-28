@@ -1,8 +1,8 @@
 name: ci
 
-# Runs each target's own checks on every push. Planted repo-hygiene note: the
-# checkout action is pinned to a mutable major tag (@v4), not a commit SHA — the
-# R-02 Pinned-Dependencies answer in /ANSWERS.yaml.
+# Runs each target's own checks on every push and pull request — the R-S1 ci-gate
+# strength in /ANSWERS.yaml. Planted repo-hygiene defect: the actions are pinned
+# to a mutable major tag (@v4), not a commit SHA — the R-02 answer.
 on:
   push:
   pull_request:

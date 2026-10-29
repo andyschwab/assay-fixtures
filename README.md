@@ -16,7 +16,9 @@ targets/
   flawed-webapp/   a small app with planted defects across the evaluation axes
     ANSWERS.yaml   the known-answer sheet for this target
   clean-lib/       the CONTROL: a small library kept deliberately healthy
-  lockfiles/       two planted lockfiles for dependency-scan: one truncated (always fails to audit), one pinning a package with a known advisory
+  lockfiles/       planted lockfiles for the dependency auditors: one truncated (always fails to audit), one npm lockfile and one pip pin each carrying a known advisory
+    ANSWERS.yaml   the known-answer sheet for this target
+  infra/           a planted Dockerfile and Terraform bucket for an IaC and container policy instrument
     ANSWERS.yaml   the known-answer sheet for this target
     ANSWERS.yaml   asserts the near-absence of findings
 ```

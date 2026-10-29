@@ -59,7 +59,7 @@ planted:                       # defects an evaluation SHOULD find
     axis: code-security        # the assay axis the finding should land on
     polarity: gap
     evidence: config/settings.mjs:7   # where the planted item lives (path relative to the target)
-    detectable_by: [gitleaks, eval-pass]   # which method class is expected to recover it
+    detectable_by: [gitleaks, practice-review]   # which method class is expected to recover it
     note: one line on what was planted and why it is inert
 strengths:                     # planted STRENGTHS an evaluation should also name
   - id: S-01
@@ -90,7 +90,7 @@ standing facts, not planted defects: they pin what a deterministic instrument
 reads, so a change in its reading shows as a miss, and on the control they are
 the gaps that are known rather than manufactured.
 
-**Method classes** (`detectable_by`): `eval-pass` (assay's built-in method),
+**Method classes** (`detectable_by`): `practice-review` (assay's built-in method),
 `dcr` (deep-code-review), and each instrument by its own id — `gitleaks`,
 `fresh-clone`, `dependency-scan`, `repo-census`. `scorecard` is retired in assay
 (its checks need live GitHub API access); an item only it can find reads out of
